@@ -5,12 +5,18 @@ import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 import { getTodo, updateTodo } from '../../helpers/todosAcess'
 import { getUploadUrl } from '../../helpers/attachmentUtils'
+import { createLogger } from '../../utils/logger'
+
 
 // import { createAttachmentPresignedUrl } from '../../businessLogic/todos'
 // import { getUserId } from '../utils'
+const logger = createLogger('DeleteTodo')
+
 const bucket = process.env.ATTACHMENT_S3_BUCKET
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+
+    logger.info('UploadUrl: ', event)
     const todoId = event.pathParameters.todoId
     // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
     const todo = await getTodo(todoId)

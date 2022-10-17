@@ -3,7 +3,7 @@ const AWSXRay = require('aws-xray-sdk')
 // import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 // import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
-// import { TodoUpdate } from '../models/TodoUpdate';
+import { TodoUpdate } from '../models/TodoUpdate';
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -81,6 +81,28 @@ export async function deleteTodo(todo: TodoItem): Promise<TodoItem> {
     }
 }).promise()
   return result
+}
+
+
+export async function updateTodoItem(todos: TodoUpdate): Promise<TodoUpdate> {
+  await docClient.update({
+      TableName: todosTable,
+      Key: {
+        userId: todos.userId,
+        todoId: todos.todoId
+      },
+      UpdateExpression: 'set #nameId= :n, dueDate= :d, done= :dn',
+      ExpressionAttributeNames: {
+        '#nameId': 'name'
+      },
+      ExpressionAttributeValues: {
+        ':n': todos.name,
+        ':d': todos.dueDate,
+        ':dn': todos.done
+      }
+    })
+    .promise()
+  return todos
 }
 
 //  export class TodoAcess {
