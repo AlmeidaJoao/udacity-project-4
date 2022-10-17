@@ -66,6 +66,23 @@ export async function updateTodo(todo: TodoItem): Promise<TodoItem> {
 }).promise()
 return result.Attributes as TodoItem
 }
+
+export async function deleteTodo(todo: TodoItem): Promise<TodoItem> {
+  const result = await docClient.delete({
+    TableName : todosTable,
+    Key: {
+      userId: todo.userId,
+      todoId: todo.todoId
+    },
+    IndexName: index,
+    ConditionExpression: 'todoId = :todoId',
+    ExpressionAttributeValues: {
+      ':todoId': todo.todoId
+    }
+}).promise()
+  return result
+}
+
 //  export class TodoAcess {
 //   constructor(
 //     private readonly docClient: DocumentClient = createDynamoDBClient(),
